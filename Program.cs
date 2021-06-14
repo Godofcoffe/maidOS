@@ -8,7 +8,7 @@ namespace MaidOS
 {
     class Program
     {
-        enum Opcao { cache, clean_disk, repare_system };
+        enum Opcao { quit, cache, clean_disk, repare_system, help };
 
         static void Main(string[] args)
         {
@@ -25,17 +25,30 @@ namespace MaidOS
             Console.WriteLine($"                                                                                              {versao}");
             Console.WriteLine("Autor: Godofcoffe\n\n\n");
             // Console.WriteLine("> Há uma nova versão disponivel <");
-            Console.Write("Oque eu posso fazer por você hoje (usuario)?\nDigite '?' para mostrar o menu de ajuda.\n\n");
+            Console.Write("Oque eu posso fazer por você hoje (usuario)?\n\n");
             Console.WriteLine("[ 1 ] Limpar cache de Apps e arquivos temporários");
             Console.WriteLine("[ 2 ] Escanear e reparar arquivos do sistema operacional");
             Console.WriteLine("[ 3 ] Verificação de disco");
+            Console.WriteLine("[ 4 ] Ajuda");
             Console.WriteLine("[ 0 ] Sair");
             Console.Write("Opção > ");
             int index = int.Parse(Console.ReadLine());
             Opcao opcao = (Opcao)index;
             switch (opcao)
             {
-
+                case Opcao.cache:
+                    break;
+                case Opcao.clean_disk:
+                    break;
+                case Opcao.repare_system:
+                    break;
+                case Opcao.quit:
+                    break;
+                case Opcao.help:
+                    break;
+                default:
+                    Console.WriteLine("Essa opção não existe!");
+                    break;
             }
 
         }
