@@ -1,0 +1,7 @@
+C:\Users\kevin\Documents\repos-local\MaidOS\bin\Debug\MaidOS.exe.config
+C:\Users\kevin\Documents\repos-local\MaidOS\bin\Debug\MaidOS.exe
+C:\Users\kevin\Documents\repos-local\MaidOS\bin\Debug\MaidOS.pdb
+C:\Users\kevin\Documents\repos-local\MaidOS\obj\Debug\MaidOS.csproj.AssemblyReference.cache
+C:\Users\kevin\Documents\repos-local\MaidOS\obj\Debug\MaidOS.csproj.CoreCompileInputs.cache
+C:\Users\kevin\Documents\repos-local\MaidOS\obj\Debug\MaidOS.exe
+C:\Users\kevin\Documents\repos-local\MaidOS\obj\Debug\MaidOS.pdb
