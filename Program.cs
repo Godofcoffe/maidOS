@@ -31,10 +31,12 @@ namespace MaidOS
             Console.WriteLine("[ 3 ] Verificação de disco");
             Console.WriteLine("[ 0 ] Sair");
             Console.Write("Opção > ");
-            var opcao = Console.ReadKey();
-            Console.WriteLine(opcao);
-            Console.WriteLine(opcao.GetType());
-            Console.Read();
+            int index = int.Parse(Console.ReadLine());
+            Opcao opcao = (Opcao)index;
+            switch (opcao)
+            {
+
+            }
 
         }
         static void Maid(string[] dir)
