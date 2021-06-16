@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Diagnostics;
+using System.Management;
 
 namespace MaidOS
 {
@@ -14,6 +12,7 @@ namespace MaidOS
 
         static void Main(string[] args)
         {
+            string diretorioAtual = Directory.GetCurrentDirectory();
             string versao = "0.0.0";
             string[] diretorios = { @"C:\Windows\Temp",
             @"C:\Users\{self.usr}\AppData\Local\Temp",
@@ -25,6 +24,8 @@ namespace MaidOS
 
             Console.SetWindowSize(80, 20);
 
+            inicio:
+            Console.Clear();
             Console.WriteLine(".....................................MaidOS.....................................");
             Console.WriteLine($"                                                                         {versao}");
             Console.WriteLine("Autor: Godofcoffe\n\n");
@@ -53,6 +54,7 @@ namespace MaidOS
             switch (opcao_selecionada)
             {
                 case Opcao.cache:
+                    SubInicio:
                     Console.WriteLine("[ 1 ] Somente diretórios cache");
                     Console.WriteLine("[ 2 ] Somente diretório cache de Windows Update");
                     Console.WriteLine("[ 3 ] Somente cache DNS");
@@ -65,34 +67,50 @@ namespace MaidOS
                     switch (opcao_selecionada2)
                     {
                         case Opcao2.quit:
-                            Console.WriteLine("saindo...");
-                            break;
+                            goto inicio;
 
                         case Opcao2.dirs_cache:
-                            Console.WriteLine("cache");
+                            int tot = QuantArquivos(diretorios);
+                            if (tot > 0)
+                            {
+                                Console.WriteLine($"Há um total de {tot} de arquivo e pastas.");
+                                Console.Write("Deseja continuar? [s/n]: ");
+                                char verificacao = Console.ReadLine().ToLower()[0];
+                                if (verificacao == 's')
+                                {
+                                    Maid(diretorios);
+                                }
+                                else
+                                {
+                                    goto SubInicio;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Não pude calcular quantos arquivos estão no cache.");
+                            }
                             break;
 
                         case Opcao2.Winupdate:
-                            Console.WriteLine("cache update");
+                            Console.WriteLine("Ainda em desenvolvimento...");
                             break;
 
                         case Opcao2.dns:
-                            Console.WriteLine("dns");
+                            LimparDns();
                             break;
-
                     }
                     break;
 
                 case Opcao.clean_disk:
-                    Console.WriteLine("limpando disco...");
+                    chkdsk();
                     break;
 
                 case Opcao.repare_system:
-                    Console.WriteLine("reparando...");
+                    Reparos();
                     break;
 
                 case Opcao.quit:
-                    Console.WriteLine("saindo...");
+                    Console.WriteLine("Saindo...");
                     break;
 
                 default:
@@ -102,21 +120,28 @@ namespace MaidOS
 
         }
 
-        int carregarTamanho(string[] dir)
+        static int QuantArquivos(string[] dir)
         {
             string[] paths = { };
             string[] arqs = { };
-            foreach(string d in dir)
+            foreach (string d in dir)
             {
-                paths = Directory.GetDirectories(d);
-                arqs = Directory.GetFiles(d);
+                try
+                {
+                    paths = Directory.GetDirectories(d);
+                    arqs = Directory.GetFiles(d);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Console.WriteLine("Não tenho permissão para acessar esse diretório/arquivo.");
+                }
             }
             int tamanho_paths = paths.Length;
             int tamanho_arqs = arqs.Length;
             return tamanho_arqs + tamanho_paths;
         }
 
-        void Maid(string[] dir)
+        static void Maid(string[] dir)
         {
             foreach(string d in dir)
             {
@@ -136,17 +161,60 @@ namespace MaidOS
             }
         }
 
-        void Limpar_dns()
+        static void LimparDns()
         {
-            string diretorioAtual = Directory.GetCurrentDirectory();
             try
             {
-                Process.Start("");
+                Process.Start(@"..\..\Dns.bat");
             }
             catch
             {
                 Console.WriteLine("Um erro ocorreu ao executar o comando!");
             }
+        }
+
+        static string GetPlataforma()
+        {
+            string os = "";
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem"))
+            {
+                ManagementObjectCollection information = searcher.Get();
+                if (information != null)
+                {
+                    foreach (ManagementObject obj in information)
+                    {
+                        os = obj["Caption"].ToString() + " - " + obj["OSArchitecture"].ToString();
+                    }
+                }
+                os = os.Replace("NT 5.1.2600", "XP");
+                os = os.Replace("NT 5.2.3790", "Server 2003");
+                return os;
+            }
+        }
+
+        static void Reparos()
+        {
+            string plat = GetPlataforma();
+            if (plat.IndexOf("Windows 7") != -1)
+            {
+                Console.WriteLine("Executando sfc:");
+                Process.Start(@"..\..\SFC.bat");
+            }
+            else if (plat.IndexOf("Windows 10") != -1 || plat.IndexOf("Windows 8") != -1 || plat.IndexOf("Windows 8.1") != -1)
+            {
+                Console.WriteLine("Executando DISM.exe");
+                Process.Start(@"..\..\DISM.bat");
+                Process.Start(@"..\..\SFC.bat");
+            }
+            else
+            {
+                Console.WriteLine("Não há suporte para esse sistema operacional!");
+            }
+        }
+
+        static void chkdsk()
+        {
+            Process.Start(@"..\..\chkdsk.bat");
         }
     }
 }
